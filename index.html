@@ -1,0 +1,300 @@
+<!DOCTYPE html>
+<html lang="cs">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>⚡ QuickSMP Season 1 – Live Leaderboard</title>
+
+  <!-- Favicon -->
+  <link rel="icon" href="data:image/svg+xml,<svg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 100 100'><text y='.9em' font-size='90'>⚡</text></svg>">
+
+  <!-- Open Graph -->
+  <meta property="og:title" content="⚡ QuickSMP Season 1 ⚡">
+  <meta property="og:description" content="Live leaderboard, kill feed a statistiky QuickSMP Season 1 turnaje v reálném čase!">
+  <meta property="og:type" content="website">
+  <meta name="theme-color" content="#FFD700">
+  <meta name="description" content="QuickSMP Season 1 – 7denní Minecraft SMP turnaj. Sleduj live Žebříček, kill feed a statistiky.">
+
+  <!-- Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Rajdhani:wght@400;500;600;700&family=Inter:wght@300;400;500;600&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+
+<canvas id="particles-canvas"></canvas>
+<canvas id="confetti-canvas"></canvas>
+
+<!-- ── NAV ── -->
+<nav id="main-nav">
+  <div class="nav-inner">
+    <a href="#hero" class="nav-logo">⚡ QuickSMP</a>
+    <ul class="nav-links">
+      <li><a href="#hero">Domů</a></li>
+      <li><a href="#about">O turnaji</a></li>
+      <li><a href="#leaderboard">Žebříček</a></li>
+      <li><a href="#killfeed">Kill Feed</a></li>
+      <li><a href="#awards">Ocenění</a></li>
+      <li><a href="#online">Online</a></li>
+      <li><a href="#community">Komunita</a></li>
+    </ul>
+    <div class="nav-right">
+      <span id="offline-badge">🔴 Server offline</span>
+      <div id="nav-live"></div>
+      <a class="nav-discord-btn" href="https://discord.gg/Ttk3bphd88" target="_blank" rel="noopener">💬 Discord</a>
+    </div>
+    <button class="hamburger" id="hamburger" onclick="toggleMobileMenu()" aria-label="Menu">
+      <span></span><span></span><span></span>
+    </button>
+  </div>
+</nav>
+
+<div id="mobile-menu">
+  <a href="#hero"         onclick="closeMobileMenu()">Domů</a>
+  <a href="#about"        onclick="closeMobileMenu()">O turnaji</a>
+  <a href="#leaderboard"  onclick="closeMobileMenu()">Žebříček</a>
+  <a href="#killfeed"     onclick="closeMobileMenu()">Kill Feed</a>
+  <a href="#awards"       onclick="closeMobileMenu()">Ocenění</a>
+  <a href="#online"       onclick="closeMobileMenu()">Online hráči</a>
+  <a href="#community"    onclick="closeMobileMenu()">Komunita</a>
+  <div class="mm-social">
+    <a class="dc" href="https://discord.gg/Ttk3bphd88"    target="_blank" rel="noopener">💬 Discord</a>
+    <a class="yt" href="https://www.youtube.com/@b0tFleyz" target="_blank" rel="noopener">▶ YouTube</a>
+    <a class="pp" href="https://paypal.me/FleyzB0T"        target="_blank" rel="noopener">💙 Podpora</a>
+  </div>
+</div>
+
+<!-- ── HERO ── -->
+<section id="hero">
+  <div class="container">
+    <div id="special-banner"></div>
+    <div id="stale-warning" class="stale-warning">
+      ⚠️ Data mohou být neaktuální — MC server neodpovídá
+    </div>
+    <div class="hero-kicker">🔴 LIVE</div>
+    <h1 class="hero-title">⚡ QuickSMP <span>Season 1</span></h1>
+
+    <div class="hero-day-badge">
+      <span id="hero-day-num">—</span>
+      <span class="hero-sep">·</span>
+      <span id="hero-day-name">Načítám…</span>
+    </div>
+    <div id="hero-day-desc" class="hero-day-desc"></div>
+
+    <div class="day-progress" id="day-progress"></div>
+
+    <div class="hero-stats">
+      <div class="hero-stat">
+        <div class="hero-stat-val" id="stat-total">—</div>
+        <div class="hero-stat-label">Hráčů</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val" id="stat-online">—</div>
+        <div class="hero-stat-label">Online</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val" id="stat-kills">—</div>
+        <div class="hero-stat-label">Kills celkem</div>
+      </div>
+      <div class="hero-stat">
+        <div class="hero-stat-val" id="stat-tps">—</div>
+        <div class="hero-stat-label">Násobič bodů</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ABOUT ── -->
+<section id="about">
+  <div class="container">
+    <div class="about-grid">
+
+      <div class="about-left">
+        <div class="about-eyebrow">⚡ QuickSMP Season 1</div>
+        <h2 class="about-tagline">Zahraj si týdenní SMP plné<br><span>AKCE!</span></h2>
+        <p class="about-desc">
+          QuickSMP je 7denní Minecraft SMP turnaj,
+          kde hráči sbírají body za killy a skrz speciální události.
+          Top 10 hráčů na konci turnaje se utká ve finále o titul vítěze QuickSMP!
+        </p>
+        <p class="about-desc">
+          Systém bodů je jednoduchý: za kill +1 bod, za smrt −1 bod.
+          Kdo má 5+ kill streak, dostane na hlavu bounty.
+          Kdo drží Dragon Egg, sbírá bonusový bod za každý unikátní kill.
+        </p>
+        <div class="about-pills">
+          <span class="pill">Kill = +1 bod</span>
+          <span class="pill">Smrt = −1 bod</span>
+          <span class="pill">Blood Moon = 2×</span>
+          <span class="pill">Dragon Egg = bonus</span>
+          <span class="pill">Bounty systém</span>
+        </div>
+      </div>
+
+      <div class="about-right">
+        <div class="scoring-card">
+          <div class="scoring-title">Scoring systém</div>
+          <div class="scoring-row">
+            <div class="scoring-text"><strong>Kill</strong><span>Zabítí nepřítele</span></div>
+            <span class="scoring-pts pts-green">+1</span>
+          </div>
+          <div class="scoring-row">
+            <div class="scoring-text"><strong>Smrt</strong><span>Oběť ztrácí bod</span></div>
+            <span class="scoring-pts pts-red">−1</span>
+          </div>
+          <div class="scoring-row">
+            <div class="scoring-text"><strong>Blood Moon</strong><span>Aktivní v den 5</span></div>
+            <span class="scoring-pts pts-gold">2×</span>
+          </div>
+          <div class="scoring-row">
+            <div class="scoring-text"><strong>Bounty Kill</strong><span>5+ kill streak cíl</span></div>
+            <span class="scoring-pts pts-orange">+bonus</span>
+          </div>
+          <div class="scoring-row">
+            <div class="scoring-text"><strong>Dragon Egg</strong><span>Unikátní kill bonus</span></div>
+            <span class="scoring-pts pts-purple">+1</span>
+          </div>
+        </div>
+      </div>
+
+    </div>
+
+    <div class="section-title" style="margin-top:48px">Průběh turnaje</div>
+    <div class="days-grid" id="days-grid">
+      <!-- filled by renderDaysGrid() in script.js -->
+    </div>
+  </div>
+</section>
+
+<!-- ── LEADERBOARD ── -->
+<section id="leaderboard">
+  <div class="container">
+    <div class="section-title">Žebříček</div>
+    <div class="card">
+      <div class="lb-toolbar">
+        <input id="lb-search" type="search" placeholder="Hledat hráče…" oninput="handleSearch(this.value)">
+        <div id="lb-sort-info"></div>
+      </div>
+      <div class="lb-wrap">
+        <table id="lb-table">
+          <thead>
+            <tr>
+              <th>#</th>
+              <th>Hráč</th>
+              <th data-col="score"  class="c-score  sortable">Skóre <i class="sort-icon"></i></th>
+              <th data-col="kills"  class="c-kills  sortable">Kills <i class="sort-icon"></i></th>
+              <th data-col="deaths" class="c-deaths sortable">Deaths <i class="sort-icon"></i></th>
+              <th class="c-kd">K/D</th>
+              <th class="c-streak">Streak</th>
+              <th class="c-playtime">Čas</th>
+            </tr>
+          </thead>
+          <tbody id="lb-body">
+            <tr><td colspan="8"><div class="skeleton"></div></td></tr>
+            <tr><td colspan="8"><div class="skeleton"></div></td></tr>
+            <tr><td colspan="8"><div class="skeleton"></div></td></tr>
+          </tbody>
+        </table>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── KILL FEED ── -->
+<section id="killfeed">
+  <div class="container">
+    <div class="section-title">Kill Feed <span id="kf-count" class="section-badge"></span></div>
+    <div class="card">
+      <div class="kf-list" id="kf-list">
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+        <div class="skeleton"></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ── AWARDS ── -->
+<section id="awards">
+  <div class="container">
+    <div class="section-title">Ocenění</div>
+    <div id="awards-grid" class="awards-grid">
+      <div class="skeleton" style="height:120px"></div>
+      <div class="skeleton" style="height:120px"></div>
+      <div class="skeleton" style="height:120px"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ── ONLINE ── -->
+<section id="online">
+  <div class="container">
+    <div class="section-title">🟢 Online hráči <span id="online-count" class="section-badge"></span></div>
+    <div id="online-grid" class="online-grid"></div>
+  </div>
+</section>
+
+<!-- ── COMMUNITY ── -->
+<section id="community">
+  <div class="container">
+    <div class="community-eyebrow">Připoj se</div>
+    <div class="community-tagline">Líbí se ti turnaj?<br>Připoj se nebo podpoř Fleyze a tím ho velice motivuješ pro další eventy!</div>
+    <div class="social-cards">
+      <a class="social-card discord"
+         href="https://discord.gg/Ttk3bphd88"
+         target="_blank" rel="noopener">
+        <span class="social-icon-big">💬</span>
+        <span class="social-name-big">Discord</span>
+        <span class="social-handle">discord.gg/Ttk3bphd88</span>
+      </a>
+      <a class="social-card youtube"
+         href="https://www.youtube.com/@b0tFleyz"
+         target="_blank" rel="noopener">
+        <span class="social-icon-big">▶</span>
+        <span class="social-name-big">YouTube</span>
+        <span class="social-handle">@b0tFleyz</span>
+      </a>
+      <a class="social-card paypal"
+         href="https://paypal.me/FleyzB0T"
+         target="_blank" rel="noopener">
+        <span class="social-icon-big">💙</span>
+        <span class="social-name-big">Podpora</span>
+        <span class="social-handle">paypal.me/FleyzB0T</span>
+      </a>
+    </div>
+  </div>
+</section>
+
+<!-- ── FOOTER ── -->
+<footer>
+  <div class="container">
+    <div class="footer-inner">
+      <a href="#hero" class="footer-logo">⚡ QuickSMP Season 1</a>
+      <div class="footer-links">
+        <a href="https://discord.gg/Ttk3bphd88"    target="_blank" rel="noopener">💬 Discord</a>
+        <a href="https://www.youtube.com/@b0tFleyz" target="_blank" rel="noopener">▶ YouTube</a>
+        <a href="https://paypal.me/FleyzB0T"        target="_blank" rel="noopener">💙 Podpora</a>
+        <a href="#leaderboard">Žebříček</a>
+        <a href="#killfeed">Kill Feed</a>
+      </div>
+      <div class="footer-copy">
+        &copy; 2026 QuickSMP Season 1 &nbsp;&middot;&nbsp;
+        Made by <a href="https://www.youtube.com/@b0tFleyz" target="_blank" rel="noopener">Fleyz</a><br>
+        Not an official Minecraft product. Not affiliated with Mojang.
+      </div>
+    </div>
+  </div>
+</footer>
+
+<!-- ── MODAL ── -->
+<div id="modal-overlay" onclick="closeModal()">
+  <div class="modal-card" onclick="event.stopPropagation()">
+    <button class="modal-close" onclick="closeModal()">&times;</button>
+    <div id="modal-content"></div>
+  </div>
+</div>
+
+<script src="script.js"></script>
+</body>
+</html>
