@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════
 //  CONFIG  —  změň API_BASE na IP/URL svého serveru
 // ═══════════════════════════════════════════════════════════
-const API_BASE = "http://localhost:8080";
+const API_BASE = "https://quicksmp-api.fleyz.workers.dev";
 
 // ═══════════════════════════════════════════════════════════
 //  STATE
