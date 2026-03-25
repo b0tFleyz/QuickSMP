@@ -26,7 +26,7 @@ const DAY_INFO = [
   { name:'KILLING BEGINS',     desc:'PvP zapnuto — lov začíná!' },
   { name:'THE OVERKILLER',     desc:'Mace crafting je nyní dostupný' },
   { name:"THE END?",           desc:'End portál se otevírá' },
-  { name:'BLOOD MOON',         desc:'🌕 2× body za kills a deaths!' },
+  { name:'BLOOD MOON',         desc:'2× body za kills a deaths!' },
   { name:'THE FINAL WAR',      desc:'Border se zmenšuje na 1000×1000' },
   { name:'THE FINAL JUDGMENT', desc:'Top 10 bojuje o korunu — zbytek spectate' },
 ];
@@ -56,13 +56,13 @@ function skinAvatar(uuid, size=64) {
 function skinBody(uuid) {
   return `https://mc-heads.net/body/${encodeURIComponent(uuid)}/100`;
 }
-const FALLBACK_AVATAR = 'https://minotar.net/avatar/MHF_Steve/64';
+const FALLBACK_AVATAR = 'https://minotar.net/helm/MHF_Steve/64';
 const FALLBACK_BODY   = 'https://minotar.net/body/MHF_Steve/100';
 
 const SKIN_FALLBACKS = {
   avatar: [
     uuid => `https://crafatar.com/avatars/${uuid}?size=64&overlay`,
-    uuid => `https://minotar.net/avatar/${uuid}/64`,
+    uuid => `https://minotar.net/helm/${uuid}/64`,
     ()   => FALLBACK_AVATAR,
   ],
   body: [
@@ -182,7 +182,7 @@ function renderHero(server) {
     document.body.classList.add('bloodmoon');
     banner.className = 'bloodmoon-banner';
     banner.style.display = 'flex';
-    banner.textContent = '🌕 BLOOD MOON AKTIVNÍ — 2× BODY ZA KILLS A DEATHS!';
+    banner.textContent = 'BLOOD MOON AKTIVNÍ — 2× BODY ZA KILLS A DEATHS!';
   } else if (server.finale) {
     document.body.classList.remove('bloodmoon');
     banner.className = 'finale-banner';
