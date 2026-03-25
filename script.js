@@ -1,7 +1,7 @@
 // ═══════════════════════════════════════════════════════════
 //  CONFIG  —  změň API_BASE na IP/URL svého serveru
 // ═══════════════════════════════════════════════════════════
-const API_BASE = "https://quicksmp-api.fleyz.workers.dev";
+const API_BASE = "http://localhost:8080";
 
 // ═══════════════════════════════════════════════════════════
 //  STATE
@@ -26,7 +26,7 @@ const DAY_INFO = [
   { name:'KILLING BEGINS',     desc:'PvP zapnuto — lov začíná!' },
   { name:'THE OVERKILLER',     desc:'Mace crafting je nyní dostupný' },
   { name:"THE END?",           desc:'End portál se otevírá' },
-  { name:'BLOOD MOON',         desc:'2× body za kills a deaths!' },
+  { name:'BLOOD MOON',         desc:'🌕 2× body za kills a deaths!' },
   { name:'THE FINAL WAR',      desc:'Border se zmenšuje na 1000×1000' },
   { name:'THE FINAL JUDGMENT', desc:'Top 10 bojuje o korunu — zbytek spectate' },
 ];
@@ -51,17 +51,39 @@ function relTime(ts) {
 }
 
 function skinAvatar(uuid, size=64) {
-  return `https://crafatar.com/avatars/${encodeURIComponent(uuid)}?size=${size}&overlay`;
+  return `https://mc-heads.net/avatar/${encodeURIComponent(uuid)}/${size}`;
 }
 function skinBody(uuid) {
-  return `https://crafatar.com/renders/body/${encodeURIComponent(uuid)}?overlay`;
+  return `https://mc-heads.net/body/${encodeURIComponent(uuid)}/100`;
 }
-const FALLBACK_AVATAR = 'https://crafatar.com/avatars/8667ba71b85a4004af54457a9734eed7?size=64&overlay';
-const FALLBACK_BODY   = 'https://crafatar.com/renders/body/8667ba71b85a4004af54457a9734eed7?overlay';
+const FALLBACK_AVATAR = 'https://minotar.net/avatar/MHF_Steve/64';
+const FALLBACK_BODY   = 'https://minotar.net/body/MHF_Steve/100';
+
+const SKIN_FALLBACKS = {
+  avatar: [
+    uuid => `https://crafatar.com/avatars/${uuid}?size=64&overlay`,
+    uuid => `https://minotar.net/avatar/${uuid}/64`,
+    ()   => FALLBACK_AVATAR,
+  ],
+  body: [
+    uuid => `https://crafatar.com/renders/body/${uuid}?overlay`,
+    uuid => `https://minotar.net/body/${uuid}/100`,
+    ()   => FALLBACK_BODY,
+  ],
+};
 
 function imgErr(el, type='avatar') {
   el.onerror = null;
-  el.src = type === 'body' ? FALLBACK_BODY : FALLBACK_AVATAR;
+  const uuid = el.dataset.uuid || '';
+  const chain = SKIN_FALLBACKS[type] || SKIN_FALLBACKS.avatar;
+  const tried = parseInt(el.dataset.fallback || '0', 10);
+  if (tried < chain.length) {
+    el.dataset.fallback = tried + 1;
+    el.onerror = () => imgErr(el, type);
+    el.src = chain[tried](uuid);
+  } else {
+    el.src = type === 'body' ? FALLBACK_BODY : FALLBACK_AVATAR;
+  }
 }
 
 // animate number count-up/down
@@ -160,12 +182,12 @@ function renderHero(server) {
     document.body.classList.add('bloodmoon');
     banner.className = 'bloodmoon-banner';
     banner.style.display = 'flex';
-    banner.textContent = 'BLOOD MOON AKTIVNÍ — 2× BODY ZA KILLS A DEATHS!';
+    banner.textContent = '🌕 BLOOD MOON AKTIVNÍ — 2× BODY ZA KILLS A DEATHS!';
   } else if (server.finale) {
     document.body.classList.remove('bloodmoon');
     banner.className = 'finale-banner';
     banner.style.display = 'flex';
-    banner.textContent = 'FINALE — TOP 10 BOJUJE O KORUNU QUICKSMP!';
+    banner.textContent = '👑 FINALE — TOP 10 BOJUJE O KORUNU QUICKSMP!';
   } else {
     document.body.classList.remove('bloodmoon');
     banner.style.display = 'none';
@@ -238,7 +260,7 @@ function renderLeaderboard(players, eggHolder) {
       <td><span class="rank-badge">#${p.rank}</span></td>
       <td>
         <div class="player-cell">
-          <img class="player-avatar" src="${avatar}" alt="${esc(p.name)}" loading="lazy" onerror="imgErr(this)">
+          <img class="player-avatar" src="${avatar}" alt="${esc(p.name)}" loading="lazy" data-uuid="${esc(p.uuid)}" onerror="imgErr(this)">
           <div>
             <div class="player-name-wrap">
               <span class="player-name">${esc(p.name)}</span>
@@ -347,12 +369,12 @@ function buildKE(k, isNew) {
   const kAvatar = esc(k.killerSkin || skinAvatar(k.killerUuid||''));
   const vAvatar = esc(k.victimSkin || skinAvatar(k.victimUuid||''));
   return `<div class="kill-entry${bCls}${newCls}">
-    <img class="kf-avatar" src="${kAvatar}" alt="${esc(k.killer)}" loading="lazy" onerror="imgErr(this)">
+    <img class="kf-avatar" src="${kAvatar}" alt="${esc(k.killer)}" loading="lazy" data-uuid="${esc(k.killerUuid||'')}" onerror="imgErr(this)">
     <div class="kf-text">
       <span class="kf-killer">${esc(k.killer)}</span>
       <span class="kf-sword">⚔</span>
       <span class="kf-victim">${esc(k.victim)}</span>
-      <img class="kf-avatar" src="${vAvatar}" alt="${esc(k.victim)}" loading="lazy" onerror="imgErr(this)">
+      <img class="kf-avatar" src="${vAvatar}" alt="${esc(k.victim)}" loading="lazy" data-uuid="${esc(k.victimUuid||'')}" onerror="imgErr(this)">
       ${k.bountyKill ? '<span class="kf-btag">🎯 BOUNTY</span>' : ''}
     </div>
     <div class="kf-pts">
@@ -375,7 +397,7 @@ function renderAwards(awards) {
   grid.innerHTML = Object.values(awards).map(a => {
     const avatar = esc(a.skin || skinAvatar(a.uuid||''));
     return `<div class="award-card" onclick="openModal('${esc(a.uuid)}')">
-      <img class="award-avatar" src="${avatar}" alt="${esc(a.player)}" loading="lazy" onerror="imgErr(this)">
+      <img class="award-avatar" src="${avatar}" alt="${esc(a.player)}" loading="lazy" data-uuid="${esc(a.uuid||'')}" onerror="imgErr(this)">
       <div class="award-meta">
         <div class="award-title">${esc(a.title)}</div>
         <div class="award-player">${esc(a.player)}</div>
@@ -401,7 +423,7 @@ function renderOnline(server) {
     const avatar  = esc(p.skin || skinAvatar(p.uuid||''));
     const eggLine = isEgg ? '<br><span style="color:var(--egg);font-size:.7rem">🥚 EGG</span>' : '';
     return `<div class="online-card ${isEgg?'egg':''}" onclick="openModal('${esc(p.uuid)}')">
-      <img class="oc-avatar" src="${avatar}" alt="${esc(p.name)}" loading="lazy" onerror="imgErr(this)">
+      <img class="oc-avatar" src="${avatar}" alt="${esc(p.name)}" loading="lazy" data-uuid="${esc(p.uuid||'')}" onerror="imgErr(this)">
       <div class="oc-name">${esc(p.name)}</div>
       <div class="oc-info">#${p.rank||'?'} &nbsp;·&nbsp; ${p.score} pt${eggLine}</div>
     </div>`;
@@ -430,7 +452,7 @@ function openModal(uuid) {
 
     content.innerHTML = `
       <div class="modal-header">
-        <img class="modal-skin" src="${bodyUrl}" alt="${esc(p.name)}" loading="lazy" onerror="imgErr(this,'body')">
+        <img class="modal-skin" src="${bodyUrl}" alt="${esc(p.name)}" loading="lazy" data-uuid="${esc(p.uuid)}" onerror="imgErr(this,'body')">
         <div class="modal-hdr-info">
           <div class="modal-name">${esc(p.name)}</div>
           <div class="modal-badge-row">
